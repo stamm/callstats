@@ -14,8 +14,8 @@ func Benchmark(b *testing.B) {
 		{"1.csv", 3},
 		{"1_1.csv", 3},
 		{"2.csv", 100},
-		// {"3.csv", 1000},
-		// {"4.csv", 10000},
+		{"3.csv", 1000},
+		{"4.csv", 10000},
 	}
 	for _, bm := range benchmarks {
 		b.Run("Simple;"+bm.filename, func(b *testing.B) {
