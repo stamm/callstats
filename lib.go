@@ -33,11 +33,12 @@ func GetMediansChanImpr(window int, numbers <-chan int) <-chan int {
 				lastValue = lastInsertedValues[0]
 			}
 			windowSlice = getNewWindows(window, number, windowSlice, lastValue)
+
 			if len(lastInsertedValues) == window {
-				lastInsertedValues = append(lastInsertedValues[1:], number)
-			} else {
-				lastInsertedValues = append(lastInsertedValues, number)
+				lastInsertedValues = lastInsertedValues[1:]
 			}
+			lastInsertedValues = append(lastInsertedValues, number)
+
 			medians <- GetMedianImpr(windowSlice)
 		}
 		close(medians)
@@ -46,16 +47,16 @@ func GetMediansChanImpr(window int, numbers <-chan int) <-chan int {
 }
 
 func getNewWindows(window int, number int, windowSlice []int, lastValue int) []int {
-	if len(windowSlice) < 0 {
+	if len(windowSlice) <= 0 {
 		windowSlice = append(windowSlice, number)
 	} else {
+		var index int
 		if len(windowSlice) >= window {
 			// delete the oldest element
-			oldest := lastValue
-			index := sort.SearchInts(windowSlice, oldest)
+			index = sort.SearchInts(windowSlice, lastValue)
 			windowSlice = append(windowSlice[:index], windowSlice[index+1:]...)
 		}
-		index := sort.SearchInts(windowSlice, number)
+		index = sort.SearchInts(windowSlice, number)
 		if index < len(windowSlice) {
 			windowSlice = append(windowSlice[:index], append([]int{number}, windowSlice[index:]...)...)
 		} else {

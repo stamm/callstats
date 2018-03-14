@@ -1,13 +1,13 @@
 package callstats_test
 
 import (
-	"callstats"
 	"testing"
 
+	"github.com/stamm/callstats"
 	"github.com/stretchr/testify/require"
 )
 
-func TestFullImpr(t *testing.T) {
+func TestMediansImpr(t *testing.T) {
 	table := []struct {
 		name   string
 		window int
@@ -23,7 +23,7 @@ func TestFullImpr(t *testing.T) {
 	}
 }
 
-func TestFullChanImpr(t *testing.T) {
+func TestMediansChanImpr(t *testing.T) {
 	table := []struct {
 		name   string
 		window int
@@ -44,36 +44,8 @@ func TestFullChanImpr(t *testing.T) {
 			res := callstats.GetMediansChanImpr(test.window, ch)
 			i := 0
 			for val := range res {
-				require.Equal(t, test.expect[i], val)
+				require.Equal(t, test.expect[i], val, "on step %d", i)
 				i++
-			}
-		})
-	}
-}
-
-func BenchmarkAllImpr(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		callstats.GetMediansImpr(3, []int{100, 101, 102, 110, 115, 120, 110, 110, 110})
-	}
-}
-
-func BenchmarkFilesImpr(b *testing.B) {
-	benchmarks := []struct {
-		filename string
-		window   int
-	}{
-		{"2.csv", 100},
-		{"3.csv", 1000},
-		{"4.csv", 10000},
-	}
-	for _, bm := range benchmarks {
-		b.Run(bm.filename, func(b *testing.B) {
-			numbers, _ := callstats.ReadIntoChan("files/" + bm.filename)
-			b.ResetTimer()
-			for i := 0; i < b.N; i++ {
-				ch := callstats.GetMediansChanImpr(bm.window, numbers)
-				for range ch {
-				}
 			}
 		})
 	}
